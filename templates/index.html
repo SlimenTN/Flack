@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Flack</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row main">
+            <div class="col-md-4 left-panel">
+                <h2>Rooms <button type="button" id="add-room" class="btn btn-light">Add room</button></h2>
+                <ul class="list-group rooms">
+                    {% for room in rooms %}
+                    <li class="list-group-item" data-name="{{ room['name'] }}">{{ room["name"] }}</li>
+                    {% endfor %}
+                    <!-- <li class="list-group-item">Room 2</li>
+                    <li class="list-group-item selected">Room 3</li>
+                    <li class="list-group-item">Room 4</li>
+                    <li class="list-group-item">Room 5</li> -->
+                </ul>
+            </div>
+            <div class="col-md-8 right-panel">
+                <div class="header">
+                    <h2 id="room-name">Welcome to Flack</h2>
+                </div>
+                <div class="content">
+                    <ul class="list-unstyled messages">
+                        <!-- Messages goes here -->
+                    </ul>
+                </div>
+                <div class="footer">
+                    <div class="input-group mb-3">
+                        <input id="message-input" type="text" class="form-control" placeholder="Say something!" aria-label="Recipient's username" aria-describedby="basic-addon2" disabled>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="send-message" disabled>Send</button>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
