@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // check if new user
     checkUser();
 
+    // check if user clicked on a room before
+    rememberRoom();
+
     // init socket.io
     initSocketIO();
 
@@ -15,6 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     });
 });
+
+function rememberRoom(){
+    let oldRoom = localStorage.getItem('room');
+    console.log('oldRoom', oldRoom);
+    if(oldRoom){
+        document.querySelectorAll('.list-group-item').forEach((roomDOM) => {
+            if(oldRoom == roomDOM.dataset.name){
+                whenRoomClicked(roomDOM);
+            }
+        });
+    }
+}
 
 function prepareMessageToBeSent(){
     const message = document.getElementById('message-input').value;
@@ -66,6 +81,7 @@ function whenRoomClicked(roomDOM){
     document.getElementById('send-message').disabled = false;
     toggleSelectedClass(roomDOM);
     let roomName = roomDOM.dataset.name;
+    localStorage.setItem('room', roomName);
     loadRoomMessages(roomName);
 }
 

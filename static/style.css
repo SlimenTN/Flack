@@ -19,6 +19,10 @@
     margin-top: 5px;
 }
 
+.rooms{
+    margin-top: 50px;
+}
+
 .rooms .list-group-item{
     background-color: transparent;
     border: none;
