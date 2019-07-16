@@ -1,6 +1,12 @@
+// declaring global variable for socket
+var socket;
+
 document.addEventListener('DOMContentLoaded', () => {
     // check if new user
     checkUser();
+
+    // init socket.io
+    initSocketIO();
 
     // add click event on rooms
     document.querySelectorAll('.list-group-item').forEach((roomDOM) => {
@@ -8,39 +14,27 @@ document.addEventListener('DOMContentLoaded', () => {
             whenRoomClicked(roomDOM);
         })
     });
-
-    // add click event on "add-room" button
-    document.getElementById('add-room').addEventListener('click', () => {
-        let room = prompt('Write a name for the new room.');
-        addNewRoom(room);
-    });
-
-    // add click event to "send-message" button
-    document.getElementById('send-message').addEventListener('click', () => {
-        const message = document.getElementById('message-input').value;
-        if(message != ''){
-            const room = document.querySelector('.selected').dataset.name;
-            const user = localStorage.getItem('flack-user');
-            sendMessage(message, user, room);
-            document.getElementById('message-input').value = '';
-        }
-    });
 });
+
+function prepareMessageToBeSent(){
+    const message = document.getElementById('message-input').value;
+    if(message != ''){
+        const room = document.querySelector('.selected').dataset.name;
+        const user = localStorage.getItem('flack-user');
+        sendMessage(message, user, room);
+        document.getElementById('message-input').value = '';
+    }
+}
 
 function sendMessage(message, user, room){
     const request = new XMLHttpRequest();
     request.open('POST', '/add-message');
 
     request.onload = () => {
-        console.log('res', request.responseText)
         const response = JSON.parse(request.responseText);
 
         if(response.success){
-            const messageHTML = buildMessageHTML(user, message);
-            const noMessagesDOM = document.querySelector('.no-messages-found');
-            const messagesDOM = document.querySelector('.messages');
-            if(messagesDOM.contains(noMessagesDOM)) messagesDOM.innerHTML = messageHTML;
-            else messagesDOM.innerHTML += messageHTML;
+            socket.emit('NEW_MESSAGE_SUBMITTED', {message, user, room});
         }
     }
 
@@ -123,14 +117,7 @@ function addNewRoom(roomName) {
     request.onload = () => {
         const response = JSON.parse(request.responseText);
         if (response.success) {
-            const li = document.createElement('li');
-            li.innerHTML = roomName;
-            li.setAttribute('data-name', roomName);
-            li.classList.add('list-group-item');
-            li.addEventListener('click', () => {
-                whenRoomClicked(li);
-            })
-            document.querySelector('.rooms').append(li);
+            socket.emit('NEW_ROOM_SUBMITTED', {'roomName': roomName});
         } else {
             alert(response.message);
         }
@@ -139,4 +126,49 @@ function addNewRoom(roomName) {
     const data = new FormData();
     data.append('room', roomName);
     request.send(data);
+}
+
+function initSocketIO(){
+    socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    socket.on('connect', () => {
+        console.log('socket initialized!');
+        // add click event on "add-room" button
+        document.getElementById('add-room').addEventListener('click', () => {
+            let room = prompt('Write a name for the new room.');
+            addNewRoom(room);
+        });
+
+        // add click event to "send-message" button
+        document.getElementById('send-message').addEventListener('click', () => {
+            prepareMessageToBeSent();
+        });
+
+        // add keyup event on message input
+        document.getElementById('message-input').addEventListener('keyup', (event) => {
+            if (event.keyCode == 13) prepareMessageToBeSent();
+        });
+    });
+
+    socket.on('NEW_ROOM_RECIEVED', (data) => {
+        const li = document.createElement('li');
+        li.innerHTML = data.roomName;
+        li.setAttribute('data-name', data.roomName);
+        li.classList.add('list-group-item');
+        li.addEventListener('click', () => {
+            whenRoomClicked(li);
+        })
+        document.querySelector('.rooms').append(li);
+    });
+
+    socket.on('NEW_MESSAGE_RECIEVED', (data) => {
+        let currentRoom = document.querySelector('.selected').dataset.name;
+        console.log('currentRoom', currentRoom)
+        if(data.room == currentRoom){
+            const messageHTML = buildMessageHTML(data.user, data.message);
+            const noMessagesDOM = document.querySelector('.no-messages-found');
+            const messagesDOM = document.querySelector('.messages');
+            if(messagesDOM.contains(noMessagesDOM)) messagesDOM.innerHTML = messageHTML;
+            else messagesDOM.innerHTML += messageHTML;
+        }
+    });
 }

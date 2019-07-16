@@ -11,28 +11,28 @@ socketio = SocketIO(app)
 app.debug = True
 
 rooms = [
-    {
-        "name": "Room 1",
-        "messages": [
-            {
-                "user": "User 1",
-                "content": "bla bla bla!"
-            }
-        ]
-    },
-    {
-        "name": "Room 2",
-        "messages": [
-            {
-                "user": "User 1",
-                "content": "bla bla bla!"
-            },
-            {
-                "user": "User 2",
-                "content": "bla bla bla!"
-            },
-        ]
-    },
+    # {
+    #     "name": "Room 1",
+    #     "messages": [
+    #         {
+    #             "user": "User 1",
+    #             "content": "bla bla bla!"
+    #         }
+    #     ]
+    # },
+    # {
+    #     "name": "Room 2",
+    #     "messages": [
+    #         {
+    #             "user": "User 1",
+    #             "content": "bla bla bla!"
+    #         },
+    #         {
+    #             "user": "User 2",
+    #             "content": "bla bla bla!"
+    #         },
+    #     ]
+    # },
 ]
 
 @app.route("/")
@@ -76,16 +76,18 @@ def add_message():
             })
     return jsonify({"success": True})
 
-def run_server():
-    extra_dirs = ['tempaltes','static',]
-    extra_files = extra_dirs[:]
-    for extra_dir in extra_dirs:
-        for dirname, dirs, files in walk(extra_dir):
-            for filename in files:
-                filename = path.join(dirname, filename)
-                if path.isfile(filename):
-                    extra_files.append(filename)
-    app.run(extra_files=extra_files)  
+
+@socketio.on("NEW_ROOM_SUBMITTED")
+def vote(data):
+    roomName = data["roomName"]
+    emit('NEW_ROOM_RECIEVED', {"roomName": roomName}, broadcast=True)
+
+
+@socketio.on("NEW_MESSAGE_SUBMITTED")
+def vote(data):
+    emit('NEW_MESSAGE_RECIEVED', {"message": data["message"], "user": data["user"], "room": data["room"]}, broadcast=True)
+
+
 
 if __name__ == '__main__':
-    run_server()
+    app.run()
