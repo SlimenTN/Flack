@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='date.format.js') }}"></script>
 </head>
 <body>
     <div class="container">
         <div class="row main">
-            <div class="col-md-4 left-panel">
+            <div class="col-md-3 left-panel">
                 <h2>Flack <button type="button" id="add-room" class="btn btn-light">Add room</button></h2>
                 <ul class="list-group rooms">
                     {% for room in rooms %}
@@ -26,9 +27,9 @@
                     <li class="list-group-item">Room 5</li> -->
                 </ul>
             </div>
-            <div class="col-md-8 right-panel">
+            <div class="col-md-9 right-panel">
                 <div class="header">
-                    <h2 id="room-name">Welcome to Flack qsdqs</h2>
+                    <h2 id="room-name">Welcome to Flack</h2>
                 </div>
                 <div class="content">
                     <ul class="list-unstyled messages">

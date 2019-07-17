@@ -1,5 +1,11 @@
 .main{
     height: 100vh;
+    border-right: solid 1px #dfdfdf;
+    border-left: solid 1px #dfdfdf;
+}
+
+.container{
+    max-width: 100% !important;
 }
 
 .messages img{
@@ -65,4 +71,9 @@
 
 .no-messages-found{
     text-align:center;
+}
+
+.message-date{
+    font-size: 12px;
+    color: #b3b3b3;
 }
